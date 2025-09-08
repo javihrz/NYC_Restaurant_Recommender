@@ -1,6 +1,7 @@
 import pandas as pd
 import time
 import os
+from pathlib import Path
 
 
 def clear_comm_path():
@@ -20,8 +21,15 @@ def save_new_dataframe():
 
 
 if __name__ == '__main__':
-    comm_path = "comm_pipe_c.csv"
-    saved_path = "saved_dataset.csv"
+    base_dir = Path(__file__).resolve().parent
+    data_dir = base_dir / "project_data"
+    comm_dir = base_dir / "comm"
+
+    data_dir.mkdir(exist_ok=True)
+    comm_dir.mkdir(exist_ok=True)
+
+    saved_path = data_dir / "saved_dataset.csv"
+    comm_path = comm_dir / "comm_pipe_c.csv"
 
     while True:
         time.sleep(3)
