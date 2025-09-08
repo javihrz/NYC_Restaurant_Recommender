@@ -2,12 +2,13 @@ import pandas as pd
 import random
 import time
 import os
+from pathlib import Path
 from colorama import Fore, Style
 
 
 class RestaurantFile:
     def __init__(self):
-        self.data_frame = pd.read_csv("ny_restaurants.csv")
+        self.data_frame = pd.read_csv(all_restaurants_csv)
         self.saved_list = None
         self.unfiltered_list = None
         self.num_saved_list = 0
@@ -642,14 +643,26 @@ def screen_messages(keyword):
 
 
 if __name__ == '__main__':
+    base_dir = Path(__file__).resolve().parent
+    data_dir = base_dir / "project_data"
+    comm_dir = base_dir / "comm"
+
+    data_dir.mkdir(exist_ok=True)
+    comm_dir.mkdir(exist_ok=True)
+
+    all_restaurants_csv = data_dir / "ny_restaurants.csv"
+
+    favorites_csv = data_dir / "favorite_dataset.csv"
+    saved_dataset_csv = data_dir / "saved_dataset.csv"
+    comparison_csv = data_dir / "saved_comparison.csv"
+
     my_file = RestaurantFile()
 
-    request_file = "request.txt"
-    comm_path_a = "response.txt"
-
-    comm_path_c = "comm_pipe_c.csv"
-    comm_path_b = "comm_pipe_b.csv"
-    comm_path_d = "comm_pipe_d.csv"
+    request_file = comm_dir / "request.txt"
+    comm_path_a = comm_dir / "response.txt"
+    comm_path_b = comm_dir / "comm_pipe_b.csv"
+    comm_path_c = comm_dir / "comm_pipe_c.csv"
+    comm_path_d = comm_dir / "comm_pipe_d.csv"
 
     header = ("\n-- New York Restaurant Recommender --\n\n"
               "Hello! This service is to help you decide which restaurant \n"
