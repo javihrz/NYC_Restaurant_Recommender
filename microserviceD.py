@@ -1,6 +1,7 @@
 import pandas as pd
 import time
 import os
+from pathlib import Path
 
 
 def clear_comm_path():
@@ -9,19 +10,26 @@ def clear_comm_path():
 
 
 def get_comparison():
-    saved_dataframe = pd.read_csv(favorite_path)
+    saved_dataframe = pd.read_csv(saved_path)
     saved_dataframe.to_csv(comm_path, mode='a', index=False)
 
 
 def save_new_comparison():
     new_dataframe = pd.read_csv(comm_path)
     clear_comm_path()
-    new_dataframe.to_csv(favorite_path, index=False)
+    new_dataframe.to_csv(saved_path, index=False)
 
 
 if __name__ == '__main__':
-    comm_path = "comm_pipe_d.csv"
-    favorite_path = "saved_comparison.csv"
+    base_dir = Path(__file__).resolve().parent
+    data_dir = base_dir / "project_data"
+    comm_dir = base_dir / "comm"
+
+    data_dir.mkdir(exist_ok=True)
+    comm_dir.mkdir(exist_ok=True)
+
+    saved_path = data_dir / "saved_comparison.csv"
+    comm_path = comm_dir / "comm_pipe_d.csv"
 
     while True:
         time.sleep(3)
