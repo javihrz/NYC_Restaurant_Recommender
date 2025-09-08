@@ -1,36 +1,37 @@
 import os
 import time
+from pathlib import Path
 
 
 def initialize():
     """creates all the .txt files incase they aren't already their locally"""
-    if not os.path.exists("log.txt"):
-        with open("log.txt", "w"):
+    if not os.path.exists(log_path):
+        with open(log_path, "w"):
             pass       # Creates an empty file
 
-    if not os.path.exists("response.txt"):
-        with open("response.txt", "w"):
+    if not os.path.exists(response_path):
+        with open(response_path, "w"):
             pass
 
-    if not os.path.exists("request.txt"):
-        with open("request.txt", "w"):
+    if not os.path.exists(request_path):
+        with open(request_path, "w"):
             pass
 
 
 def write_log(entry):
     """this puts in another entry into log.txt"""
     entry = str(entry)
-    with open("log.txt", "a") as log:
+    with open(log_path, "a") as log:
         log.write(entry.strip() + "\n")
 
 
 def copy_log():
-    """copy's the contents of log.txt and puts them in response.txt, which the developer can then extract/interact with, log.txt cannot
-    be interacted with directly"""
-    with open("log.txt", "r") as source:
+    """copy's the contents of log.txt and puts them in response.txt, which the developer can then extract/interact with.
+     log.txt cannot be interacted with directly"""
+    with open(log_path, "r") as source:
         lines = source.readlines()
 
-    with open("response.txt", "w") as destination:
+    with open(response_path, "w") as destination:
         for line in lines:
             if line.strip():
                 destination.write(line)
@@ -38,9 +39,9 @@ def copy_log():
 
 def delete_last_log():
     """deletes the last log, can be looped multiple times if more than one deletion is wanted"""
-    with open("log.txt", "r") as log:
+    with open(log_path, "r") as log:
         lines = log.readlines()
-    with open("log.txt", "w") as log:
+    with open(log_path, "w") as log:
         # slice off the last line/log
         log.writelines(lines[:-1])
 
@@ -65,20 +66,29 @@ def listen():
 
     print("watching request.txt...")
     while True:
-        if os.path.exists("request.txt"):
-            with open("request.txt", "r") as request:
+        if os.path.exists(request_path):
+            with open(request_path, "r") as request:
                 content = request.read().strip()
 
             if content:
                 process_command(content)
 
                 # clear request file to show the message was received
-                with open("request.txt", "w") as request:
+                with open(request_path, "w") as request:
                     request.write("")
 
         time.sleep(0.2)  # delay
 
 
 if __name__ == "__main__":
+    base_dir = Path(__file__).resolve().parent
+    comm_dir = base_dir / "comm"
+    comm_dir.mkdir(exist_ok=True)
+
+    response_path = comm_dir / "response.txt"
+    request_path = comm_dir / "request.txt"
+    log_path = comm_dir / "log.txt"
+
     initialize()
     listen()
+    
